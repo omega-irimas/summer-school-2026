@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summer School on AI and Optimization</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #ecf0f1;
+            --white: #ffffff;
+            --dark-text: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Justified text for paragraphs */
+        p, .section-subtitle {
+            text-align: justify;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--secondary-color) !important;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-nav .nav-link {
+            margin: 0 0.5rem;
+            color: #ecf0f1 !important;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--secondary-color) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero .row {
+            justify-content: center;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin: 0 auto;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .hero-content h1,
+        .hero-content p,
+        .hero-content .hero-date {
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            letter-spacing: -1px;
+            animation: slideInDown 0.8s ease;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #ecf0f1;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .hero .hero-date {
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: rgba(236, 240, 241, 0.9);
+            font-weight: 500;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #ecf0f1;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .hero .subtitle.no-wrap {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hero-buttons {
+            animation: fadeIn 1s ease 0.3s both;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .hero-buttons .btn {
+            margin: 0 0.3rem;
+        }
+
+        .btn-primary-custom {
+            background: var(--accent-color);
+            border: none;
+            padding: 12px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary-custom:hover {
+            background: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: var(--white);
+        }
+
+        .btn-secondary-custom {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 10px 38px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background: var(--white);
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Fee cards */
+        .fee-card {
+            border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(142deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 100%);
+            border: 1px solid rgba(52, 152, 219, 0.25);
+        }
+
+        .fee-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+        }
+
+        .fee-card .card-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .fee-card .card-text {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            color: var(--primary-color);
+        }
+
+        .fee-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+
+        .fee-list li {
+            margin-bottom: 0.6rem;
+            color: #4b4b4b;
+            font-size: 0.95rem;
+        }
+
+        .fee-list li i {
+            margin-right: 0.6rem;
+            color: var(--secondary-color);
+        }
+
+        /* Prize cards */
+        .prize-card {
+            border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(140deg, rgba(46, 204, 113, 0.16) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border: 1px solid rgba(46, 204, 113, 0.25);
+        }
+
+        .prize-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+        }
+
+        .prize-card .card-title {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .prize-card .card-text {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            color: #27ae60;
+        }
+
+        .prize-card .card-description {
+            color: #4b4b4b;
+            font-size: 0.95rem;
+        }
+
+        /* Overview Section */
+        #overview {
+            background: var(--light-bg);
+        }
+
+        .overview-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .overview-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        /* Learning Objectives */
+        #objectives {
+            background: var(--white);
+        }
+
+        .objective-item {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ecf0f1 0%, var(--light-bg) 100%);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            transform: translateX(10px);
+            background: linear-gradient(135deg, #e8e8e8 0%, #f0f0f0 100%);
+        }
+
+        .objective-item i {
+            color: var(--accent-color);
+            margin-right: 1rem;
+            font-size: 1.3rem;
+        }
+
+        /* Program Section */
+        #program {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: var(--white);
+        }
+
+        #program h2 {
+            color: var(--white);
+        }
+
+        #program h2::after {
+            background: var(--accent-color);
+        }
+
+        .day-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .day-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .day-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .day-card .instructor {
+            color: #bdc3c7;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .day-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .day-card li {
+            padding: 0.7rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: #ecf0f1;
+        }
+
+        .day-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Scientific Committee */
+        #committee {
+            background: var(--light-bg);
+        }
+
+        .committee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .committee-member {
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .member-image {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .member-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .committee-member:hover .member-image img {
+            transform: scale(1.05);
+        }
+
+        .committee-member h4 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .committee-member p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        /* Override justified text for committee sections */
+        #committee .committee-member p,
+        #organization .committee-member p {
+            text-align: center;
+        }
+
+        /* Organization Committee */
+        #organization {
+            background: var(--white);
+        }
+
+        .organization-member .member-image img {
+            border-radius: 50%;
+        }
+
+        /* Why Attend */
+        #why-attend {
+            background: var(--white);
+        }
+
+        .benefit-box {
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+            border-radius: 10px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-box:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-right: 1.5rem;
+            min-width: 60px;
+        }
+
+        .benefit-box h4 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .benefit-box p {
+            margin: 0;
+            opacity: 0.95;
+        }
+
+        /* Registration */
+        #registration {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #c0392b 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        #registration h2 {
+            color: var(--white);
+        }
+
+        #registration h2::after {
+            background: var(--white);
+            opacity: 0.7;
+        }
+
+        .registration-content {
+            margin-top: 2rem;
+        }
+
+        .registration-info {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            margin-bottom: 2rem;
+        }
+
+        .footer-content h5 {
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .social-links {
+            margin: 1.5rem 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            color: var(--white);
+            line-height: 40px;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            color: #bdc3c7;
+        }
+
+        /* Sponsors Section */
+        .sponsors-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sponsor-item {
+            flex: 0 1 auto;
+            text-align: center;
+            min-width: 200px;
+            max-width: 400px;
+        }
+
+        .sponsor-item img {
+            height: 120px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .larger-sponsor {
+            width: 320px !important;
+            height: auto !important;
+        }
+
+        .extra-large-sponsor {
+            width: 400px !important;
+            height: auto !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                margin-right: 0;
+                display: block;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .committee-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .member-image {
+                width: 150px;
+                height: 150px;
+            }
+
+            .benefit-box {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .benefit-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            /* Sponsors responsive */
+            .sponsors-grid {
+                gap: 1.5rem;
+            }
+
+            .sponsor-item {
+                min-width: 150px;
+                max-width: 350px;
+            }
+
+            .sponsor-item img {
+                height: 100px;
+            }
+
+            .larger-sponsor {
+                width: 260px !important;
+                height: auto !important;
+            }
+
+            .extra-large-sponsor {
+                width: 320px !important;
+                height: auto !important;
+            }
+
+            #sponsors .ea-sponsor {
+                max-height: 100px !important;
+                width: auto !important;
+            }
+
+            #sponsors {
+                padding: 40px 0;
+            }
+
+            #sponsors h2 {
+                font-size: 1.8rem;
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Scroll to top button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--secondary-color);
+            color: var(--white);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .scroll-to-top:hover {
+            background: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .scroll-to-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                <i class="fas fa-graduation-cap"></i> Summer School
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#objectives">Objectives</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#program">Program</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#committee">Committee</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#registration">Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div id="canvas-container"></div>
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-lg-8 col-12 hero-content">
+                    <h1 data-aos="fade-down">Summer School 2026</h1>
+                    <p class="hero-date" data-aos="fade-up" data-aos-delay="100" style="font-size: 2rem; color: white; font-weight: bold;">29 June - 2 July 2026</p>
+                    <p class="subtitle my-md-1  my-lg-5 py-md-5 py-lg-5" data-aos="fade-up" data-aos-delay="150">Artificial Intelligence and Optimization: <br>
+                        From Mathematical Modelling to Hybrid and Learning-Based Approaches
+                    </p>
+                    
+                    <div class="registration-info" style="font-size: 1rem;">
+                        <i class="fas fa-map-marker-alt"></i> Batiment K, Université de Haute-Alsace <br>
+                        18 rue des Frères Lumière<br>68093 MULHOUSE Cedex
+                    </div>
+                    <div class="hero-buttons justify-content-center my-3" data-aos="zoom-in" data-aos-delay="400">
+                        <button class="btn btn-primary-custom mb-1" onclick="document.getElementById('registration').scrollIntoView({behavior: 'smooth'})">
+                            <i class="fas fa-pencil-alt"></i> Register Now
+                        </button>
+                        <button class="btn btn-secondary-custom mb-1" onclick="document.getElementById('program').scrollIntoView({behavior: 'smooth'})">
+                            <i class="fas fa-book"></i> Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center hero-content" data-aos="zoom-in">
+                    <div style="font-size: 4rem; color: rgba(255,255,255,0.2); margin-top: 2rem;">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Intro Text Section -->
+    <section id="intro" style="background: #f8fafc;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10" data-aos="fade-up">
+                    <h2>Why Optimization Matters</h2>
+                    <p class="section-subtitle">Optimization is a fundamental pillar of numerous scientific and industrial applications, including logistics, planning, energy systems, transportation, and healthcare. However, real-world optimization problems are often large-scale, combinatorial, nonlinear, and highly constrained, which significantly limits the effectiveness of classical optimization techniques when applied in isolation.</p>
+                    <p class="section-subtitle">In response to these challenges, hybrid approaches combining mathematical optimization, metaheuristics, and machine learning have emerged as powerful paradigms capable of leveraging both the theoretical guarantees of exact methods and the adaptability of learning-based techniques.</p>
+                    <p class="section-subtitle">This summer school aims to provide a comprehensive and modern perspective on optimization, integrating the following methodological components:</p>
+
+                    <ul style="font-size: 1.1rem; color: #4b4b4b;">
+                        <li>mathematical modelling and exact optimization methods,</li>
+                        <li>metaheuristics and approximate algorithms,</li>
+                        <li>machine learning and data-driven optimization,</li>
+                        <li>surrogate (approximation) models for computationally expensive functions,</li>
+                        <li>selection and generation hyper-heuristics</li>
+                    </ul>
+
+                    <p class="section-subtitle">The objective is to equip participants with the theoretical foundations and practical skills required to design robust, efficient, and scalable optimization strategies for complex real-world problems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview">
+        <div class="container">
+            <h2 data-aos="fade-right">Overview</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Understanding Modern Optimization Approaches</p>
+            
+            <div class="row">
+                <div class="col-lg-6" data-aos="fade-up">
+                    <div class="overview-card">
+                        <h3><i class="fas fa-cogs"></i> Optimization Problems in Real-World Practice</h3>
+                        <p class="pt-4">Optimization problems arise in many domains such as logistics, energy, transportation, and healthcare, where decisions must be made within large-scale, combinatorial, and often nonlinear search spaces under complex constraints. Mathematical modelling provides the framework to represent these systems and define objective-driven decision processes.</p>
+
+                        <p>As models become more realistic and problem sizes increase, solving them becomes computationally demanding. This calls for solution methods that can effectively explore complex search spaces while maintaining the structure of the underlying model.</p>
+                        
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="overview-card">
+                        <h3><i class="fas fa-lightbulb"></i> Exact, Hybrid, and Learning-Based Solution Methods</h3>
+                        <p>A range of solution approaches can address such problems. Exact methods provide rigorous formulations and solution guarantees, and are often the natural starting point, while metaheuristics offer practical ways to explore large, complex search spaces.</p>
+
+                        <p>These approaches can be combined in different ways, including integrating exact methods with heuristics, combining several heuristic strategies, or designing solution processes that exploit their respective strengths. More recently, learning-based techniques have been introduced to guide or adapt the search using data, helping improve efficiency in certain settings. Together, these approaches form a coherent set of tools for tackling complex optimization problems.</p>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-lg-12" data-aos="fade-up" data-aos-delay="400">
+                    <div class="overview-card">
+                        <h3><i class="fas fa-graduation-cap"></i> What You'll Learn</h3>
+                        <p><strong>Methodological Components:</strong></p>
+                        <ul style="margin-left: 1rem; margin-top: 1rem; list-style: none;">
+                            <li>✓ Mathematical modelling and exact optimization methods</li>
+                            <li>✓ Metaheuristics and approximate algorithms</li>
+                            <li>✓ Machine learning and data-driven optimization</li>
+                            <li>✓ Surrogate (approximation) models for computationally expensive functions</li>
+                            <li>✓ Selection and generation hyper-heuristics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Objectives -->
+    <section id="objectives">
+        <div class="container">
+            <h2 data-aos="fade-right">Learning Objectives</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">By the end of this summer school, you will be able to:</p>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="objective-item" data-aos="fade-up">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Formulate Real-World Problems</strong> as mathematical optimization models with real case study: Electric Vehicle Charging Scheduling (EVCS)
+                    </div>
+                    <div class="objective-item" data-aos="fade-up" data-aos-delay="100">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Solve EVCS Using Exact Methods</strong> including MILP solvers such as Gurobi
+                    </div>
+                    <div class="objective-item" data-aos="fade-up" data-aos-delay="200">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Design Efficient Metaheuristics</strong> and understand algorithmic implementation
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="objective-item" data-aos="fade-up" data-aos-delay="200">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Develop Hybrid Strategies</strong> combining metaheuristics and machine learning
+                    </div>
+                    <div class="objective-item" data-aos="fade-up" data-aos-delay="300">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Integrate Surrogate Models</strong> to reduce computational costs
+                    </div>
+                    <div class="objective-item" data-aos="fade-up" data-aos-delay="400">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Conduct Experimental Comparisons</strong> between exact, heuristic, and hybrid approaches
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Section -->
+    <section id="program">
+        <div class="container">
+            <h2 data-aos="fade-right">Tentative Program</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">4 Days of Intensive Learning and Hands-On Practice</p>
+            
+            <div class="row">
+                <div class="col-lg-6" data-aos="zoom-in">
+                    <div class="day-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Day 1</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600;">From Modelling to Exact Methods</p>
+                        <p class="instructor">Pr. Ammar Oulamara and Dr. Abdennour Azerine</p>
+                        <ul>
+                            <li>Introduction to combinatorial optimization and operations research</li>
+                            <li>Mathematical modelling of the EVCS problem using MILP formulations</li>
+                            <li>Problem solving with exact solvers (e.g., Gurobi)</li>
+                            <li>Performance analysis, scalability issues, and methodological limitations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="day-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Day 2</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600;">Metaheuristics and Hybridization</p>
+                        <p class="instructor">Pr. Diego Oliva, Dr. Mahmoud Golabi and Pr. Lhassane Idoumghar</p>
+                        <ul>
+                            <li>Overview of state-of-the-art metaheuristics</li>
+                            <li>Metaheuristic design for the EVCS problem</li>
+                            <li>Hybrid metaheuristic–machine learning approaches</li>
+                            <li>Introduction to surrogate modelling in optimization</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="day-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Day 3</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600;">Learning-Based and Automated Optimization</p>
+                        <p class="instructor">Pr. Ed. Keedwell</p>
+                        <ul>
+                            <li>Selection and Generation Hyper-Heuristics for Optimisation</li>
+                            <li>Sequence-based Selection Hyper-Heuristics</li>
+                            <li>Sequence-based Selection Hyper-Heuristics applied to EVCS problem</li>
+                            <li>Practical applications and real-world case studies</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="day-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Day 4</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600;">Challenge / Competition</p>
+                        <p class="instructor">All Instructors</p>
+                        <ul>
+                            <li>Apply all learned techniques to a new optimization problem</li>
+                            <li>Work in teams or individually</li>
+                            <li>Present your solution and methodology</li>
+                            <li>Receive feedback from experts in the field</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Attend -->
+    <section id="why-attend">
+        <div class="container">
+            <h2 data-aos="fade-right">Why Attend?</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Gain Knowledge and Network with Leading Experts</p>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="benefit-box" data-aos="fade-up">
+                        <div class="benefit-icon"><i class="fas fa-layer-group"></i></div>
+                        <div>
+                            <h4>Coherent Framework</h4>
+                            <p>A comprehensive methodological framework integrating all modern optimization approaches</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-box" data-aos="fade-up" data-aos-delay="100">
+                        <div class="benefit-icon"><i class="fas fa-laptop-code"></i></div>
+                        <div>
+                            <h4>Hands-On Development</h4>
+                            <p>Strong emphasis on practical algorithmic development with real-world applications</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-box" data-aos="fade-up" data-aos-delay="200">
+                        <div class="benefit-icon"><i class="fas fa-rocket"></i></div>
+                        <div>
+                            <h4>State-of-the-Art Techniques</h4>
+                            <p>Learn cutting-edge optimization and AI techniques from industry leaders</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="benefit-box" data-aos="fade-up" data-aos-delay="200">
+                        <div class="benefit-icon"><i class="fas fa-industry"></i></div>
+                        <div>
+                            <h4>Real Case Study</h4>
+                            <p>Realistic and industrially relevant Electric Vehicle Charging Scheduling problem</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-box" data-aos="fade-up" data-aos-delay="300">
+                        <div class="benefit-icon"><i class="fas fa-users"></i></div>
+                        <div>
+                            <h4>Expert Interaction</h4>
+                            <p>Direct interaction with experts and leaders in optimization and AI research</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-box" data-aos="fade-up" data-aos-delay="400">
+                        <div class="benefit-icon"><i class="fas fa-certificate"></i></div>
+                        <div>
+                            <h4>Professional Networking</h4>
+                            <p>Connect with PhD students, researchers, and professionals from around the world</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steering Committee -->
+    <section id="committee">
+        <div class="container">
+            <h2 data-aos="fade-right">Scientific Committee</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Meet the Experts Leading This Summer School</p>
+            
+            <div class="committee-grid">
+                <div class="committee-member" data-aos="fade-up">
+                    <div class="member-image">
+                        <img src="img/Committee/Idoumghar Lhassane.jfif" alt="Lhassane Idoumghar">
+                    </div>
+                    <h4>Lhassane Idoumghar</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="100">
+                    <div class="member-image">
+                        <img src="img/Committee/Keedwell Edward.jfif" alt="Edward Keedwell">
+                    </div>
+                    <h4>Edward Keedwell</h4>
+                    <p>University of Exeter, UK</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="200">
+                    <div class="member-image">
+                        <img src="img/Committee/Diego Oliva.jpeg" alt="Diego Oliva">
+                    </div>
+                    <h4>Diego Oliva</h4>
+                    <p>University of Guadalajara, Mexico</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="300">
+                    <div class="member-image">
+                        <img src="img/Committee/Ammar Oulamara.png" alt="Ammar Oulamara">
+                    </div>
+                    <h4>Ammar Oulamara</h4>
+                    <p>University of Lorraine, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="400">
+                    <div class="member-image">
+                        <img src="img/Committee/Legrand Pierrick.jpg" alt="Pierrick Legrand">
+                    </div>
+                    <h4>Pierrick Legrand</h4>
+                    <p>University of Bordeaux, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="500">
+                    <div class="member-image">
+                        <img src="img/Committee/Lutton Evelyne.png" alt="Evelyne Lutton">
+                    </div>
+                    <h4>Evelyne Lutton</h4>
+                    <p>INRAE, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="600">
+                    <div class="member-image">
+                        <img src="img/Committee/Monmarché Nicolas.jfif" alt="Nicolas Monmarché">
+                    </div>
+                    <h4>Nicolas Monmarché</h4>
+                    <p>University François Rabelais of Tours, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="700">
+                    <div class="member-image">
+                        <img src="img/Committee/Denis Pallez.JPG" alt="Denis Pallez">
+                    </div>
+                    <h4>Denis Pallez</h4>
+                    <p>Université Côte d'Azur, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="800">
+                    <div class="member-image">
+                        <img src="img/Committee/Abdennour Azerine.png" alt="Abdennour Azerine">
+                    </div>
+                    <h4>Abdennour Azerine</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member" data-aos="fade-up" data-aos-delay="900">
+                    <div class="member-image">
+                        <img src="img/Committee/Mahmoud Golabi.jfif" alt="Mahmoud Golabi">
+                    </div>
+                    <h4>Mahmoud Golabi</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Organization Committee -->
+    <section id="organization">
+        <div class="container">
+            <h2 data-aos="fade-right">Organization Committee</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Meet the team behind the organization of this summer school.</p>
+
+            <div class="committee-grid">
+                <div class="committee-member organization-member" data-aos="fade-up">
+                    <div class="member-image">
+                        <img src="img/Committee/Idoumghar Lhassane.jfif" alt="Lhassane Idoumghar">
+                    </div>
+                    <h4>Lhassane Idoumghar</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="100">
+                    <div class="member-image">
+                        <img src="img/Committee/Abdennour Azerine.png" alt="Abdennour Azerine">
+                    </div>
+                    <h4>Abdennour Azerine</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="200">
+                    <div class="member-image">
+                        <img src="img/Committee/Mahmoud Golabi.jfif" alt="Mahmoud Golabi">
+                    </div>
+                    <h4>Mahmoud Golabi</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="300">
+                    <div class="member-image">
+                        <img src="img/organization/essaid.jpg" alt="Mokhtar Essaid">
+                    </div>
+                    <h4>Mokhtar Essaid</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="400">
+                    <div class="member-image">
+                        <img src="img/organization/adam.jpg" alt="Bruno Adam">
+                    </div>
+                    <h4>Bruno Adam</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="400">
+                    <div class="member-image">
+                        <img src="img/organization/hammoudi.jpg" alt="Karim Hammoudi">
+                    </div>
+                    <h4>Karim Hammoudi</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="500">
+                    <div class="member-image">
+                        <img src="img/organization/lepagnot.jpg" alt="Julien Lepagnot">
+                    </div>
+                    <h4>Julien Lepagnot</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="600">
+                    <div class="member-image">
+                        <img src="img/organization/melkemi.jpg" alt="Mahmoud Melkemi">
+                    </div>
+                    <h4>Mahmoud Melkemi</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="700">
+                    <div class="member-image">
+                        <img src="img/organization/moalic.jpg" alt="Laurent Moalic">
+                    </div>
+                    <h4>Laurent Moalic</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+
+                <div class="committee-member organization-member" data-aos="fade-up" data-aos-delay="800">
+                    <div class="member-image">
+                        <img src="img/organization/schmitt.jpg" alt="Dominique Schmitt">
+                    </div>
+                    <h4>Dominique Schmitt</h4>
+                    <p>University of Haute Alsace, France</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prerequisites -->
+    <section style="background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%); color: var(--white);">
+        <div class="container">
+            <h2 data-aos="fade-right" style="color: var(--white);">Prerequisites</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100" style="color: #ecf0f1;">Who Should Attend?</p>
+            
+            <div class="row">
+                <div class="col-lg-6" data-aos="fade-up">
+                    <h4 style="color: var(--accent-color); margin-bottom: 1.5rem;">Target Audience</h4>
+                    <ul style="font-size: 1.1rem; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>PhD students</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>Early-career researchers</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>R&D Engineers</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>Researchers and Faculty</li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <h4 style="color: var(--accent-color); margin-bottom: 1.5rem;">Background Required</h4>
+                    <ul style="font-size: 1.1rem; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>Computer Science</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>Applied Mathematics</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>Industrial Engineering</li>
+                        <li style="margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 0.8rem;"></i>Basic programming skills (Python, C/C++, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="registration">
+        <div class="container">
+            <h2 data-aos="zoom-in">Ready to Join Us?</h2>
+            <div class="registration-content" data-aos="zoom-in" data-aos-delay="200">
+                <div class="registration-info">
+                    <i class="fas fa-calendar-check"></i> 29 June - 2 July 2026
+                </div>
+                <div class="registration-info">
+                    <i class="fas fa-map-marker-alt"></i> Batiment K, Université de Haute-Alsace <br>
+                    18 rue des Frères Lumière<br>68093 MULHOUSE Cedex
+                </div>
+                <div class="registration-info">
+                    <p style="font-size: 1.1rem; margin-top: 2rem;">Due to limited capacity, <strong>pre-registration is mandatory</strong>.</p>
+                    <p style="margin-top: 1rem; opacity: 0.9;">The registration fee covers participation in the four-day summer school, including course sessions, Wi-Fi access, coffee breaks, lunches, and a certificate of participation.</p>
+                </div>
+
+                <button class="btn btn-primary-custom" style="margin-top: 2rem;" onclick="window.location.href='https://docs.google.com/forms/d/e/1FAIpQLSdKFVh3jG9-3sYXMIygrkxdNL9biXM60tiktVe6dX_lm-2s4g/viewform?usp=publish-editor'">
+                    <i class="fas fa-pencil-alt"></i> Register Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fees Section -->
+    <section id="fees" style="background: var(--light-bg);">
+        <div class="container">
+            <h2 data-aos="fade-right">Registration Fees</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Choose the category that best matches your profile.</p>
+
+                <div class="row" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-md-3 mb-4">
+                    <div class="card fee-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Doctoral Student</h5>
+                            <p class="card-text">200€</p>
+                            <ul class="fee-list">
+                                <li><i class="fas fa-check-circle"></i> Course sessions</li>
+                                <li><i class="fas fa-check-circle"></i> Wi-Fi access</li>
+                                <li><i class="fas fa-check-circle"></i> Coffee breaks</li>
+                                <li><i class="fas fa-check-circle"></i> Lunches</li>
+                                <li><i class="fas fa-check-circle"></i> Certificate of participation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card fee-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">PostDoc / Research Fellow</h5>
+                            <p class="card-text">250€</p>
+                            <ul class="fee-list">
+                                <li><i class="fas fa-check-circle"></i> Course sessions</li>
+                                <li><i class="fas fa-check-circle"></i> Wi-Fi access</li>
+                                <li><i class="fas fa-check-circle"></i> Coffee breaks</li>
+                                <li><i class="fas fa-check-circle"></i> Lunches</li>
+                                <li><i class="fas fa-check-circle"></i> Certificate of participation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card fee-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Academic</h5>
+                            <p class="card-text">300€</p>
+                            <ul class="fee-list">
+                                <li><i class="fas fa-check-circle"></i> Course sessions</li>
+                                <li><i class="fas fa-check-circle"></i> Wi-Fi access</li>
+                                <li><i class="fas fa-check-circle"></i> Coffee breaks</li>
+                                <li><i class="fas fa-check-circle"></i> Lunches</li>
+                                <li><i class="fas fa-check-circle"></i> Certificate of participation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card fee-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Industry Personnel</h5>
+                            <p class="card-text">400€</p>
+                            <ul class="fee-list">
+                                <li><i class="fas fa-check-circle"></i> Course sessions</li>
+                                <li><i class="fas fa-check-circle"></i> Wi-Fi access</li>
+                                <li><i class="fas fa-check-circle"></i> Coffee breaks</li>
+                                <li><i class="fas fa-check-circle"></i> Lunches</li>
+                                <li><i class="fas fa-check-circle"></i> Certificate of participation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenge / Competition Section -->
+    <section id="competition" style="background: rgba(52, 152, 219, 0.05);">
+        <div class="container">
+            <h2 data-aos="fade-right">Challenge & Competition</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Test your skills and win prizes by applying what you learned during the summer school.</p>
+
+            <div class="row" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-md-4 mb-4">
+                    <div class="card prize-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">1st Prize</h5>
+                            <p class="card-text">350€</p>
+                            <p class="card-description">Awarded to the individual with the most effective and innovative solution.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card prize-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">2nd Prize</h5>
+                            <p class="card-text">250€</p>
+                            <p class="card-description">Awarded to the runner-up individual demonstrating strong methodology.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card prize-card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">3rd Prize</h5>
+                            <p class="card-text">150€</p>
+                            <p class="card-description">Awarded to the individual with the most promising approach and insights.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 data-aos="fade-right">Contact</h2>
+            <p class="section-subtitle" data-aos="fade-right" data-aos-delay="100">Need help or have questions? Reach out to our team.</p>
+
+            <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-lg-8">
+                    <img src="img/contacts.png" alt="Contact Information" style="width: 100%; border-radius: 10px;" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sponsors Section -->
+    <section id="sponsors" style="background: var(--light-bg); padding: 60px 0;">
+        <div class="container">
+            <h2 data-aos="fade-right" style="text-align: center; margin-bottom: 3rem;">Our Sponsors</h2>
+            <div class="sponsors-grid" data-aos="fade-up" data-aos-delay="200">
+                <div class="sponsor-item">
+                    <img src="img/sponsors/ea.png" alt="EA Sponsor" class="ea-sponsor" />
+                </div>
+                <div class="sponsor-item">
+                    <img src="img/sponsors/irimas.jpg" alt="IRIMAS Sponsor" class="extra-large-sponsor" />
+                </div>
+                <div class="sponsor-item">
+                    <img src="img/sponsors/uha.jpg" alt="UHA Sponsor" class="larger-sponsor" />
+                </div>
+                <div class="sponsor-item">
+                    <img src="img/sponsors/roadef.png" alt="ROADEF Sponsor" class="larger-sponsor" />
+                </div>
+                
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-4 footer-content" data-aos="fade-up">
+                    <h5>About</h5>
+                    <p>A comprehensive summer school on AI and Optimization, bringing together leading experts from around the world.</p>
+                </div>
+                <div class="col-lg-4 footer-content" data-aos="fade-up" data-aos-delay="100">
+                    <h5>Quick Links</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="#home" style="color: #ecf0f1; text-decoration: none;">Home</a></li>
+                        <li><a href="#program" style="color: #ecf0f1; text-decoration: none;">Program</a></li>
+                        <li><a href="#committee" style="color: #ecf0f1; text-decoration: none;">Scientific Committee</a></li>
+                        <li><a href="#organization" style="color: #ecf0f1; text-decoration: none;">Organization Committee</a></li>
+                        <li><a href="#registration" style="color: #ecf0f1; text-decoration: none;">Register</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 footer-content" data-aos="fade-up" data-aos-delay="200">
+                    <h5>University of Haute Alsace, France</h5>
+                    <p style="margin-bottom: 0.5rem;"><a href="https://www.uha.fr" target="_blank" rel="noopener" style="color: #ecf0f1; text-decoration: none;">www.uha.fr</a></p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/UHA68/" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/UHA68" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com/company/irimas" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Summer School on AI and Optimization. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            offset: 100,
+            once: true
+        });
+
+        // Scroll to Top functionality
+        window.addEventListener('scroll', function() {
+            const scrollToTopBtn = document.querySelector('.scroll-to-top');
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Close navbar when a link is clicked
+        const navbarToggle = document.querySelector('.navbar-toggler');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+        document.querySelectorAll('.navbar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    navbarToggle.click();
+                }
+            });
+        });
+
+        // Add scroll event to navbar for shadow effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.2)';
+            } else {
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // ==================== Three.js Hero Animation ====================
+        let scene, camera, renderer, particles = [], lines = [];
+        const particleCount = 80;
+        const maxDistance = 150;
+
+        function initThreeJs() {
+            const container = document.getElementById('canvas-container');
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 300;
+            
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true, 
+                alpha: true 
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0x000000, 0);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Create particles representing AI/Optimization nodes
+            createParticles();
+            
+            // Create connecting lines
+            createConnections();
+            
+            // Animation loop
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createParticles() {
+            const geometry = new THREE.BufferGeometry();
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = {
+                    x: (Math.random() - 0.5) * 600,
+                    y: (Math.random() - 0.5) * 600,
+                    z: (Math.random() - 0.5) * 400,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    vz: (Math.random() - 0.5) * 2
+                };
+                particles.push(particle);
+                
+                geometry.vertices = geometry.vertices || [];
+                geometry.vertices.push(new THREE.Vector3(particle.x, particle.y, particle.z));
+            }
+
+            // Create particle material with gradient colors (blue to red spectrum)
+            const pointsMaterial = new THREE.PointsMaterial({
+                size: 4,
+                vertexColors: true,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            // Add colors to particles
+            const colors = [];
+            for (let i = 0; i < particleCount; i++) {
+                const hue = i / particleCount;
+                const color = new THREE.Color().setHSL(hue * 0.6 + 0.2, 0.8, 0.6);
+                colors.push(color.r, color.g, color.b);
+            }
+            geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
+
+            // Update geometry positions
+            const positions = new Float32Array(particleCount * 3);
+            particles.forEach((p, i) => {
+                positions[i * 3] = p.x;
+                positions[i * 3 + 1] = p.y;
+                positions[i * 3 + 2] = p.z;
+            });
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const points = new THREE.Points(geometry, pointsMaterial);
+            scene.add(points);
+        }
+
+        function createConnections() {
+            // Create lines connecting nearby particles
+            const lineGeometry = new THREE.BufferGeometry();
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x64B5F6, 
+                transparent: true, 
+                opacity: 0.3,
+                linewidth: 1
+            });
+
+            const lineSegments = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lineSegments);
+            lines.push({ geometry: lineGeometry, material: lineMaterial, object: lineSegments });
+        }
+
+        function updateConnections() {
+            if (lines.length === 0) return;
+
+            const positions = [];
+            
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p1 = particles[i];
+                    const p2 = particles[j];
+                    
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const dz = p1.z - p2.z;
+                    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    
+                    if (distance < maxDistance) {
+                        positions.push(p1.x, p1.y, p1.z);
+                        positions.push(p2.x, p2.y, p2.z);
+                    }
+                }
+            }
+
+            lines[0].geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update particle positions
+            particles.forEach(particle => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.z += particle.vz;
+
+                // Bounce off boundaries
+                if (Math.abs(particle.x) > 300) particle.vx *= -1;
+                if (Math.abs(particle.y) > 300) particle.vy *= -1;
+                if (Math.abs(particle.z) > 200) particle.vz *= -1;
+            });
+
+            // Update geometry positions
+            const positions = scene.children[0].geometry.attributes.position.array;
+            particles.forEach((p, i) => {
+                positions[i * 3] = p.x;
+                positions[i * 3 + 1] = p.y;
+                positions[i * 3 + 2] = p.z;
+            });
+            scene.children[0].geometry.attributes.position.needsUpdate = true;
+
+            // Update connections
+            updateConnections();
+
+            // Rotate scene slightly for visual interest
+            scene.rotation.x += 0.0002;
+            scene.rotation.y += 0.0003;
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // Setup obfuscated emails to reduce spam scraping
+        function setupObfuscatedEmails() {
+            document.querySelectorAll('.obfuscated-email').forEach(el => {
+                const user = el.getAttribute('data-email-user');
+                const domain = el.getAttribute('data-email-domain');
+                if (!user || !domain) return;
+                const email = `${user}@${domain}`;
+                el.textContent = `${user} [at] ${domain.replace(/\./g, ' [dot] ')}`;
+                el.href = `mailto:${email}`;
+            });
+        }
+
+        // Initialize Three.js and obfuscated emails when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Small delay to ensure container is rendered
+            setTimeout(initThreeJs, 100);
+            setupObfuscatedEmails();
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            if (renderer && renderer.domElement && renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
+        });
+    </script>
+</body>
+</html>
