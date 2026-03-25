@@ -235,6 +235,21 @@
             }
         }
 
+        @keyframes urgentFlash {
+            0%, 100% {
+                background: linear-gradient(45deg, #3498db, #2c3e50);
+                color: white;
+                border-color: #2980b9;
+                box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
+            }
+            50% {
+                background: linear-gradient(45deg, #e74c3c, #c0392b);
+                color: white;
+                border-color: #c0392b;
+                box-shadow: 0 0 30px rgba(231, 76, 60, 0.6);
+            }
+        }
+
         /* Sections */
         section {
             padding: 80px 0;
@@ -580,6 +595,25 @@
             margin-bottom: 2rem;
         }
 
+        .urgent-notice {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 3px solid #2c3e50;
+            margin: 1.5rem 0;
+            animation: urgentFlash 2s infinite;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .urgent-notice i {
+            color: #f39c12;
+            margin-right: 0.5rem;
+            animation: pulse 1s infinite;
+        }
+
         /* Footer */
         footer {
             background: var(--primary-color);
@@ -810,6 +844,11 @@
                     <div class="registration-info" style="font-size: 1rem;">
                         <i class="fas fa-map-marker-alt"></i> Batiment K, Université de Haute-Alsace <br>
                         18 rue des Frères Lumière<br>68093 MULHOUSE Cedex
+                    </div>
+                    <div class="urgent-notice">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>All registrations are subject to prior approval by the organizers. A confirmation will be sent by email.</strong><br>
+                        <span style="font-size: 1.2em; color: #ecf0f1;"><strong>Deadline for registration: 15 May 2026</strong></span>
                     </div>
                     <div class="hero-buttons justify-content-center my-3" data-aos="zoom-in" data-aos-delay="400">
                         <button class="btn btn-primary-custom mb-1" onclick="document.getElementById('registration').scrollIntoView({behavior: 'smooth'})">
@@ -1291,6 +1330,11 @@
                 <div class="registration-info">
                     <p style="font-size: 1.1rem; margin-top: 2rem;">Due to limited capacity, <strong>pre-registration is mandatory</strong>.</p>
                     <p style="margin-top: 1rem; opacity: 0.9;">The registration fee covers participation in the four-day summer school, including course sessions, Wi-Fi access, coffee breaks, lunches, and a certificate of participation.</p>
+                </div>
+                <div class="urgent-notice">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>All registrations are subject to prior approval by the organizers. A confirmation will be sent by email.</strong><br>
+                    <span style="font-size: 1.2em; color: #ecf0f1;"><strong>Deadline for registration: 15 May 2026</strong></span>
                 </div>
 
                 <button class="btn btn-primary-custom" style="margin-top: 2rem;" onclick="window.location.href='https://docs.google.com/forms/d/e/1FAIpQLSdKFVh3jG9-3sYXMIygrkxdNL9biXM60tiktVe6dX_lm-2s4g/viewform?usp=publish-editor'">
